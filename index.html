@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Future Firm — Transformation starts with curiosity</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=JetBrains+Mono:wght@300;400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;1,8..60,300;1,8..60,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #1a1915;
+            --fg: #e8e2d8;
+            --warm: #c4a46a;
+            --ember: #d4704a;
+            --muted: #7a756b;
+            --surface: #23221d;
+            --display: 'Playfair Display', Georgia, serif;
+            --body: 'Source Serif 4', Georgia, serif;
+            --mono: 'JetBrains Mono', monospace;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { font-size: 17px; scroll-behavior: smooth; }
+
+        body {
+            background: var(--bg);
+            color: var(--fg);
+            font-family: var(--body);
+            font-weight: 300;
+            overflow-x: hidden;
+        }
+
+        ::selection { background: var(--warm); color: var(--bg); }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 80% 60% at 20% 10%, rgba(196,164,106,0.04), transparent),
+                radial-gradient(ellipse 60% 50% at 80% 80%, rgba(212,112,74,0.03), transparent);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 1.8rem 3rem;
+        }
+
+        .logo {
+            font-family: var(--mono); font-size: 0.7rem; font-weight: 400;
+            letter-spacing: 0.2em; text-transform: uppercase;
+            color: var(--fg); text-decoration: none;
+        }
+
+        .nav-right {
+            font-family: var(--mono); font-size: 0.65rem;
+            letter-spacing: 0.12em; color: var(--muted);
+        }
+
+        section { position: relative; z-index: 1; }
+
+        .divider {
+            width: 100%; height: 1px;
+            background: linear-gradient(90deg, rgba(196,164,106,0.2), rgba(196,164,106,0.05), transparent);
+        }
+
+        .section-label {
+            font-family: var(--mono); font-size: 0.6rem;
+            letter-spacing: 0.25em; text-transform: uppercase;
+            color: var(--warm); opacity: 0.7;
+        }
+
+        /* ── HERO ── */
+        .hero {
+            min-height: 100vh; display: flex; flex-direction: column;
+            justify-content: end; padding: 0 3rem 6rem; position: relative;
+        }
+
+        .hero-question {
+            font-family: var(--display);
+            font-size: clamp(2.8rem, 8vw, 7.5rem);
+            font-weight: 400; font-style: italic;
+            line-height: 1.05; letter-spacing: -0.02em;
+            max-width: 950px;
+            opacity: 0; animation: emerge 1.2s 0.2s forwards;
+        }
+
+        .hero-question .warm { color: var(--warm); font-style: normal; }
+
+        .hero-sub {
+            margin-top: 2.5rem; font-family: var(--body);
+            font-size: 1.1rem; font-weight: 300; line-height: 1.7;
+            color: var(--muted); max-width: 520px;
+            opacity: 0; animation: emerge 0.8s 0.8s forwards;
+        }
+
+        .hero-marker {
+            position: absolute; top: 35%; right: 3rem;
+            font-family: var(--mono); font-size: 0.6rem;
+            letter-spacing: 0.15em; color: var(--muted);
+            writing-mode: vertical-rl;
+            opacity: 0; animation: emerge 0.6s 1.4s forwards;
+        }
+
+        /* ── INTRO ── */
+        .intro {
+            padding: 8rem 3rem;
+            display: grid; grid-template-columns: 200px 1fr;
+            gap: 4rem; align-items: start;
+        }
+
+        .intro-text { max-width: 640px; }
+
+        .intro-text p {
+            font-size: 1.2rem; line-height: 1.8;
+            color: var(--fg); margin-bottom: 1.5rem;
+        }
+
+        .intro-text p .accent { color: var(--warm); }
+
+        .intro-text p.small { font-size: 0.95rem; color: var(--muted); }
+
+        /* ── HOW ── */
+        .how { padding: 6rem 3rem 8rem; }
+
+        .how-header { margin-bottom: 4rem; }
+
+        .how-title {
+            font-family: var(--display);
+            font-size: clamp(1.8rem, 4vw, 3rem);
+            font-weight: 400; margin-top: 1rem;
+            max-width: 600px; line-height: 1.2;
+        }
+
+        .how-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+
+        .how-card {
+            background: var(--surface); padding: 2.5rem 2rem;
+            border: 1px solid rgba(196,164,106,0.06);
+            transition: all 0.5s ease;
+            opacity: 0; transform: translateY(20px);
+        }
+
+        .how-card.visible { opacity: 1; transform: translateY(0); }
+
+        .how-card:hover {
+            background: rgba(196,164,106,0.04);
+            border-color: rgba(196,164,106,0.12);
+        }
+
+        .how-card-icon {
+            font-family: var(--display); font-size: 2rem;
+            font-style: italic; color: var(--warm);
+            margin-bottom: 1.5rem; opacity: 0.6;
+        }
+
+        .how-card h3 {
+            font-family: var(--display); font-size: 1.25rem;
+            font-weight: 400; margin-bottom: 1rem; line-height: 1.3;
+        }
+
+        .how-card p { font-size: 0.88rem; line-height: 1.7; color: var(--muted); }
+
+        /* ── BELIEFS ── */
+        .beliefs { padding: 8rem 3rem; }
+        .beliefs-header { margin-bottom: 4rem; }
+
+        .beliefs-title {
+            font-family: var(--display);
+            font-size: clamp(1.8rem, 4vw, 3rem);
+            font-weight: 400; margin-top: 1rem; line-height: 1.2;
+        }
+
+        .belief-items { max-width: 700px; }
+
+        .belief-item {
+            padding: 2rem 0;
+            border-bottom: 1px solid rgba(196,164,106,0.08);
+            opacity: 0; transform: translateY(15px);
+            transition: all 0.5s ease;
+        }
+
+        .belief-item.visible { opacity: 1; transform: translateY(0); }
+
+        .belief-item p {
+            font-family: var(--display);
+            font-size: clamp(1.15rem, 2vw, 1.5rem);
+            line-height: 1.4; font-weight: 400;
+        }
+
+        .belief-item .aside {
+            font-family: var(--body); font-size: 0.85rem;
+            color: var(--muted); margin-top: 0.6rem; font-style: italic;
+        }
+
+        /* ── ABOUT ── */
+        .about {
+            padding: 6rem 3rem 8rem;
+            display: grid; grid-template-columns: 200px 1fr;
+            gap: 4rem; align-items: start;
+        }
+
+        .about-text { max-width: 580px; }
+
+        .about-name {
+            font-family: var(--display); font-size: 1.8rem;
+            font-weight: 400; margin-bottom: 1.5rem;
+        }
+
+        .about-text p {
+            font-size: 0.95rem; line-height: 1.8;
+            color: var(--muted); margin-bottom: 1.2rem;
+        }
+
+        .about-text p strong { color: var(--fg); font-weight: 400; }
+
+        /* ── CTA ── */
+        .cta { padding: 10rem 3rem; text-align: center; }
+
+        .cta-question {
+            font-family: var(--display);
+            font-size: clamp(2rem, 5.5vw, 4.5rem);
+            font-weight: 400; font-style: italic;
+            line-height: 1.15; letter-spacing: -0.02em;
+            margin-bottom: 1.5rem;
+        }
+
+        .cta-question .warm { color: var(--warm); font-style: normal; }
+
+        .cta-sub { font-size: 0.95rem; color: var(--muted); margin-bottom: 3rem; }
+
+        .cta-link {
+            display: inline-block; font-family: var(--mono);
+            font-size: 0.8rem; letter-spacing: 0.1em;
+            color: var(--fg); text-decoration: none;
+            padding: 1rem 2.5rem; border: 1px solid var(--warm);
+            transition: all 0.4s ease; position: relative; overflow: hidden;
+        }
+
+        .cta-link::before {
+            content: ''; position: absolute; inset: 0;
+            background: var(--warm); transform: scaleX(0);
+            transform-origin: left; transition: transform 0.4s ease;
+        }
+
+        .cta-link:hover { color: var(--bg); }
+        .cta-link:hover::before { transform: scaleX(1); }
+        .cta-link span { position: relative; z-index: 1; }
+
+        footer {
+            padding: 2rem 3rem; border-top: 1px solid rgba(196,164,106,0.08);
+            display: flex; justify-content: space-between;
+            font-family: var(--mono); font-size: 0.6rem;
+            letter-spacing: 0.12em; color: var(--muted);
+        }
+
+        footer a { color: var(--muted); text-decoration: none; transition: color 0.3s; }
+        footer a:hover { color: var(--warm); }
+
+        @keyframes emerge {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 900px) {
+            nav { padding: 1.2rem 1.5rem; }
+            .hero { padding: 0 1.5rem 4rem; }
+            .intro { grid-template-columns: 1fr; gap: 1.5rem; padding: 5rem 1.5rem; }
+            .how { padding: 4rem 1.5rem 5rem; }
+            .how-grid { grid-template-columns: 1fr; }
+            .beliefs { padding: 5rem 1.5rem; }
+            .about { grid-template-columns: 1fr; gap: 1.5rem; padding: 4rem 1.5rem 5rem; }
+            .cta { padding: 6rem 1.5rem; }
+            footer { padding: 1.5rem; flex-direction: column; gap: 0.8rem; text-align: center; }
+            .hero-marker { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="#" class="logo">The Future Firm</a>
+        <span class="nav-right">New site coming soon</span>
+    </nav>
+
+    <section class="hero">
+        <h1 class="hero-question">
+            What if the future<br>
+            of your organisation<br>
+            is already <span class="warm">inside it?</span>
+        </h1>
+        <p class="hero-sub">
+            We don't bring answers. We design the conditions
+            for your people to find them — together.
+        </p>
+        <span class="hero-marker">Amsterdam — Anywhere</span>
+    </section>
+
+    <div class="divider"></div>
+
+    <section class="intro">
+        <span class="section-label">Who we are</span>
+        <div class="intro-text">
+            <p>
+                The Future Firm designs and facilitates <span class="accent">culture and strategy transformations</span>
+                in large organisations. Not through presentations or frameworks —
+                but through carefully crafted experiences that shift how people think,
+                relate, and decide.
+            </p>
+            <p>
+                We coach leaders. We guide teams into unfamiliar territory — sometimes
+                literally. We create spaces where honest conversation replaces
+                comfortable consensus.
+            </p>
+            <p class="small">
+                Since 2007, we've worked with organisations across the globe.
+                Mountains, boardrooms, remote coastlines — wherever real change needs room to breathe.
+            </p>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section class="how">
+        <div class="how-header">
+            <span class="section-label">How we work</span>
+            <h2 class="how-title">Curiosity as method. The world as classroom.</h2>
+        </div>
+        <div class="how-grid">
+            <div class="how-card">
+                <div class="how-card-icon">I</div>
+                <h3>Culture & Strategy Transformation</h3>
+                <p>
+                    We design processes that surface what's really going on — and what's
+                    possible. Not a report you shelve. A shift you feel.
+                </p>
+            </div>
+            <div class="how-card">
+                <div class="how-card-icon">II</div>
+                <h3>Leadership Development</h3>
+                <p>
+                    Coaching and programs for leaders willing to look honestly at themselves
+                    before asking others to change.
+                </p>
+            </div>
+            <div class="how-card">
+                <div class="how-card-icon">III</div>
+                <h3>Large-scale Crowd Processes</h3>
+                <p>
+                    Engaging hundreds or thousands of people in shaping their own future.
+                    Because transformation that's done to people doesn't stick.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section class="beliefs">
+        <div class="beliefs-header">
+            <span class="section-label">What we believe</span>
+            <h2 class="beliefs-title">A few things we've learned along the way</h2>
+        </div>
+        <div class="belief-items">
+            <div class="belief-item">
+                <p>The best strategies emerge from the people who have to live them.</p>
+                <span class="aside">Not from the consultants who leave after the presentation.</span>
+            </div>
+            <div class="belief-item">
+                <p>Real change requires real discomfort.</p>
+                <span class="aside">If everyone agrees immediately, nothing is actually shifting.</span>
+            </div>
+            <div class="belief-item">
+                <p>Culture eats strategy — but they can learn to cook together.</p>
+            </div>
+            <div class="belief-item">
+                <p>Leaders who explore are more interesting than leaders who know.</p>
+                <span class="aside">Curiosity is underrated. Certainty is overrated.</span>
+            </div>
+            <div class="belief-item">
+                <p>The room matters. The mountain matters. The sea matters.</p>
+                <span class="aside">Context shapes conversation. We choose where carefully, so you can focus on what.</span>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section class="about">
+        <span class="section-label">Founded by</span>
+        <div class="about-text">
+            <h3 class="about-name">Gijs Pothof</h3>
+            <p>
+                <strong>Facilitator, designer of transformative processes, and founder of The Future Firm.</strong>
+                For nearly two decades, Gijs has guided leaders and organisations through
+                the kind of change that can't be captured in a slide deck.
+            </p>
+            <p>
+                His work takes him from the Blue Mountains of Australia to boardrooms in Amsterdam —
+                always with the same question: <strong>what happens when people stop performing
+                and start exploring?</strong>
+            </p>
+            <p>
+                Gijs partners with facilitators, coaches, and specialists who share one thing:
+                a deep curiosity about what makes organisations — and the people in them — come alive.
+            </p>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section class="cta">
+        <p class="cta-question">
+            Curious what a <span class="warm">conversation</span><br>could start?
+        </p>
+        <p class="cta-sub">New website coming. In the meantime, let's talk.</p>
+        <a href="mailto:gijs@thefuturefirm.com" class="cta-link">
+            <span>gijs@thefuturefirm.com</span>
+        </a>
+    </section>
+
+    <footer>
+        <span>The Future Firm — Amsterdam</span>
+        <span>Since 2007</span>
+        <a href="https://www.linkedin.com/company/the-future-firm" target="_blank" rel="noopener">LinkedIn</a>
+    </footer>
+
+    <script>
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { threshold: 0.15 });
+
+        document.querySelectorAll('.how-card, .belief-item').forEach((el, i) => {
+            el.style.transitionDelay = `${i * 0.08}s`;
+            observer.observe(el);
+        });
+    </script>
+
+</body>
+</html>
