@@ -1,9 +1,7 @@
 # Work Log — The Future Firm
 
 ## 2026-03-17
-**Session:** 12:39 – 14:41 (~2h)
-**Phone call with Gijs:** ~1h
-**Total:** ~3h
+**Work time:** ~1.5h (session 12:39–14:41, phone call with Gijs overlapped)
 
 - Created interactive network mindmap page (`network.html`) — force-directed graph with TFF at center, 6 partner nodes, capability sub-nodes
 - Partner nodes expand on click to show description + URL inside circle
