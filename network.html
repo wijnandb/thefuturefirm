@@ -397,51 +397,7 @@
                     });
 
                 } else if (n.type === 'partner') {
-                    const expandR = r + n.expandAnim * (mobile ? 40 : 60);
-
-                    // Expanded background
-                    if (isExpanded) {
-                        const boxW = mobile ? 180 : 240;
-                        const boxH = mobile ? 90 : 110;
-                        const alpha = Math.min(n.expandAnim, 1);
-
-                        ctx.save();
-                        ctx.globalAlpha = alpha;
-                        ctx.beginPath();
-                        const bx = n.x - boxW / 2, by = n.y + expandR + 8;
-                        const br = 6;
-                        ctx.moveTo(bx + br, by);
-                        ctx.lineTo(bx + boxW - br, by);
-                        ctx.quadraticCurveTo(bx + boxW, by, bx + boxW, by + br);
-                        ctx.lineTo(bx + boxW, by + boxH - br);
-                        ctx.quadraticCurveTo(bx + boxW, by + boxH, bx + boxW - br, by + boxH);
-                        ctx.lineTo(bx + br, by + boxH);
-                        ctx.quadraticCurveTo(bx, by + boxH, bx, by + boxH - br);
-                        ctx.lineTo(bx, by + br);
-                        ctx.quadraticCurveTo(bx, by, bx + br, by);
-                        ctx.closePath();
-                        ctx.fillStyle = colors.surface;
-                        ctx.fill();
-                        ctx.strokeStyle = colors.muted + '30';
-                        ctx.lineWidth = 1;
-                        ctx.stroke();
-
-                        // Description text
-                        ctx.fillStyle = colors.muted;
-                        ctx.font = `${mobile ? 10 : 12}px GT Cinetype, Helvetica, sans-serif`;
-                        ctx.textAlign = 'left';
-                        ctx.textBaseline = 'top';
-                        wrapText(ctx, n.description, bx + 12, by + 12, boxW - 24, mobile ? 14 : 16);
-
-                        // URL link
-                        if (n.url) {
-                            ctx.fillStyle = colors.fg;
-                            ctx.font = `${mobile ? 9 : 10}px GT Cinetype, Helvetica, sans-serif`;
-                            ctx.fillText(n.url.replace('https://', ''), bx + 12, by + boxH - (mobile ? 18 : 22));
-                        }
-
-                        ctx.restore();
-                    }
+                    const expandR = r + n.expandAnim * (mobile ? 50 : 70);
 
                     // Partner circle — filled
                     ctx.beginPath();
@@ -452,12 +408,41 @@
                     ctx.lineWidth = isExpanded ? 2 : 1.5;
                     ctx.stroke();
 
-                    // Label
-                    ctx.fillStyle = colors.fg;
-                    ctx.font = `${mobile ? 10 : 12}px GT Cinetype, Helvetica, sans-serif`;
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'middle';
-                    ctx.fillText(n.label, n.x, n.y);
+                    if (isExpanded && n.expandAnim > 0.3) {
+                        // Expanded: label at top, description centered, URL at bottom
+                        const alpha = Math.min((n.expandAnim - 0.3) / 0.7, 1);
+                        ctx.save();
+                        ctx.globalAlpha = alpha;
+
+                        // Partner name at top
+                        ctx.fillStyle = colors.fg;
+                        ctx.font = `bold ${mobile ? 11 : 13}px GT Cinetype, Helvetica, sans-serif`;
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText(n.label, n.x, n.y - expandR * 0.45);
+
+                        // Description in center
+                        ctx.fillStyle = colors.muted;
+                        ctx.font = `${mobile ? 9 : 11}px GT Cinetype, Helvetica, sans-serif`;
+                        const textW = expandR * 1.4;
+                        wrapTextCentered(ctx, n.description, n.x, n.y - expandR * 0.1, textW, mobile ? 13 : 15);
+
+                        // URL at bottom
+                        if (n.url) {
+                            ctx.fillStyle = colors.fg;
+                            ctx.font = `${mobile ? 8 : 10}px GT Cinetype, Helvetica, sans-serif`;
+                            ctx.fillText(n.url.replace('https://', ''), n.x, n.y + expandR * 0.55);
+                        }
+
+                        ctx.restore();
+                    } else {
+                        // Collapsed: just the label
+                        ctx.fillStyle = colors.fg;
+                        ctx.font = `${mobile ? 10 : 12}px GT Cinetype, Helvetica, sans-serif`;
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText(n.label, n.x, n.y);
+                    }
 
                 } else if (n.type === 'capability') {
                     // Capability node — dashed outline
@@ -513,6 +498,31 @@
             }
         }
 
+        // Centered text wrapping helper (for inside circles)
+        function wrapTextCentered(ctx, text, cx, startY, maxW, lineH) {
+            const words = text.split(' ');
+            let line = '';
+            const lines = [];
+            words.forEach(word => {
+                const test = line ? line + ' ' + word : word;
+                if (ctx.measureText(test).width > maxW && line) {
+                    lines.push(line);
+                    line = word;
+                } else {
+                    line = test;
+                }
+            });
+            if (line) lines.push(line);
+            const totalH = lines.length * lineH;
+            let curY = startY - totalH / 2 + lineH / 2;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            lines.forEach(l => {
+                ctx.fillText(l, cx, curY);
+                curY += lineH;
+            });
+        }
+
         // Interaction state
         let dragNode = null;
         let dragOffX = 0, dragOffY = 0;
@@ -522,7 +532,7 @@
             // Check partners first (priority), then others
             for (let i = nodes.length - 1; i >= 0; i--) {
                 const n = nodes[i];
-                const r = n.type === 'partner' ? n.radius + (n.expandAnim || 0) * (isMobile() ? 40 : 60) : n.radius;
+                const r = n.type === 'partner' ? n.radius + (n.expandAnim || 0) * (isMobile() ? 50 : 70) : n.radius;
                 const dx = mx - n.x, dy = my - n.y;
                 if (dx * dx + dy * dy <= r * r) return n;
             }
