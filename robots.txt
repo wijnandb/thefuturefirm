@@ -1,2 +1,5 @@
 User-agent: *
 Disallow: /v2/
+Disallow: /network.html
+Disallow: /team.html
+Disallow: /team/
